@@ -6,7 +6,15 @@ let points = 0;
 let w = 600;
 let h = 600;
 let player;
-let coin;
+let coins =[];
+let playerImg;
+let coinImg;
+
+function preload(){
+  playerImg =loadImage('assets/person.png');
+  coinImg = loadImage('assets/heart.png');
+
+}
 
 function setup() {
   cnv = createCanvas(w, h);
@@ -14,8 +22,9 @@ function setup() {
   textFont('monospace');
 
   player = new Player();
-  coin = new Coin();
 
+  // coins[0] = new Coin();
+  coins.push(new Coin());
 
 }
 
@@ -72,22 +81,61 @@ function titleMouseClicked(){
 
 function level1(){
   background(50, 150, 200);
-  // text('click for points', w/2, h - 30);
+
+  if (random(1) <= 0.01){
+    coins.push(new Coin());
+  }
 
   player.display();
   player.move();
 
+//iterating through coins array to display and move them
+
+//using for loop
+  // for (let i = 0; i < coins.length; i++){
+  //   coins[i].display();
+  //   coins[i].move();
+  // }
+
+
+// //using forEach loop
+//   coins.forEach(function(coin){
+//     coin.display();
+//     coin.move();
+//   })
+
+
+// using for of loop
+for (let coin of coins){
   coin.display();
   coin.move();
 }
 
-function level1MouseClicked(){
-    points ++;
-    console.log('points = ' + points);
 
-    if (points >= 10){
-      state = 'you win';
-    }
+  // check for collision, if there is a collision increase points by 1 AND splice that coin out of array
+  //need to iterate backwards through array
+
+  for (let i = coins.length - 1; i >= 0; i--){
+    if (dist(player.x, player.y, coins[i].x, coins[i].y) <= (player.r + coins[0].r) / 2){
+    points++;
+    console.log(points);
+    coins.splice(i, 1);
+  } else if (coins[i].y > h){
+    coins.splice(i, 1);
+    console.log('coin is out of town');
+  }
+}
+  text(`points: ${points}`, w/4, h - 30);
+
+}
+
+function level1MouseClicked(){
+    // points ++;
+    // console.log('points = ' + points);
+    //
+    // if (points >= 10){
+    //   state = 'you win';
+    // }
 }
 
 function youWin() {
